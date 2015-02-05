@@ -35,7 +35,7 @@ namespace CodeJam.AllYourBase
         public void Analyze(string[] inputs)
         {
             char maxChar = FindMaxChar(inputs);
-            Base = mCh2IntMap[maxChar];
+            Base = mCh2IntMap[maxChar] + 1;
             Solution = Convert(inputs, Base);
         }
 
