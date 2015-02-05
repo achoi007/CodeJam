@@ -1,5 +1,7 @@
 from __future__ import division
 import numpy as np
+import unittest
+import StringIO
 
 def solve_for_t(p, v):
     '''
@@ -43,13 +45,56 @@ def read_next(f):
         vel[i, :] = [int(line[n]) for n in range(3, 6)]
     return (pos, vel)
 
+def solve_next(f):
+    (pos, vel) = read_next(f)
+    t = solve_for_t(pos, vel)
+    d = solve_for_d(pos, vel, t)
+    return (t, d)
+
 def solve(f):
     n = int(f.readline())
-    for i in range(n):
-        (pos, vel) = read_next(f)
-        t = solve_for_t(pos, vel)
-        d = solve_for_d(pos, vel, t)
-        print "Case #{0}: {1}".format(i+1, d, t)
+    for i in xrange(n):
+        yield solve_next(f)
+
+class CMTest(unittest.TestCase):
+
+    def setUp(self):
+        self.ep = 0.0001
+        self.case1 = self.create_case(["3 0 -4 0 0 3", "-3 -2 -1 3 0 0",
+                                       "-3 -1 2 0 3 0"])
+        self.case2 = self.create_case(["-5 0 0 1 0 0", "-7 0 0 1 0 0",
+                                       "-6 3 0 1 0 0"])
+        self.case3 = self.create_case(["1 2 3 1 2 3", "3 2 1 3 2 1",
+                                       "1 0 0 0 0 -1", "0 10 0 0 -10 -1"])
+
+    def create_case(self, lines):
+        s = str(len(lines)) + "\n"
+        s += "\n".join(lines)
+        return StringIO.StringIO(s)
+
+    def test_read_next(self):
+        (pos, vel) = read_next(self.case1)
+        self.assertEqual(pos, np.array([[3, 0, -4],
+                                        [-3, -2, -1],
+                                        [-3, -1, 2]]))
+        self.assertEqual(vel, np.array([[0, 0, 3],
+                                        [3, 0, 0],
+                                        [0, 3, 0]]))
+
+    def test_solve(self):
+        (t, d) = solve_next(self.case1)
+        self.assertAlmostEqual(t, 0, self.ep)
+        self.assertAlmostEqual(d, 1, self.ep)
+        (t, d) = solve_next(self.case2)
+        self.assertAlmostEqual(t, 1, self.ep)
+        self.assertAlmostEqual(d, 6, self.ep)
+        (t, d) = solve_next(self.case3)
+        self.assertAlmostEqual(t, 3.3634, self.ep)
+        self.assertAlmostEqual(d, 1, self.ep)        
+
+
+if __name__ == '__main__':
+    unittest.main()
 
 
 
