@@ -28,7 +28,15 @@ def solve_for_t(p, v):
     vsum = np.sum(v, axis=0)
     numerator = -np.dot(psum, vsum)
     denominator = np.dot(vsum, vsum)
-    return numerator / denominator
+    # denominator is zero means cm will never move
+    if denominator == 0:
+        return 0
+    t = numerator / denominator
+    # t < 0 means critical point is before start.
+    if t < 0:
+        return 0
+    else:
+        return t
 
 def solve_for_d(p, v, t):
     pfinal = p + v * t
@@ -59,13 +67,17 @@ def solve(f):
 class CMTest(unittest.TestCase):
 
     def setUp(self):
-        self.ep = 0.0001
-        self.case1 = self.create_case(["3 0 -4 0 0 3", "-3 -2 -1 3 0 0",
+        self.ep = 4
+        self.case1 = self.create_case(["3 0 -4 0 0 3",
+                                       "-3 -2 -1 3 0 0",
                                        "-3 -1 2 0 3 0"])
-        self.case2 = self.create_case(["-5 0 0 1 0 0", "-7 0 0 1 0 0",
+        self.case2 = self.create_case(["-5 0 0 1 0 0",
+                                       "-7 0 0 1 0 0",
                                        "-6 3 0 1 0 0"])
-        self.case3 = self.create_case(["1 2 3 1 2 3", "3 2 1 3 2 1",
-                                       "1 0 0 0 0 -1", "0 10 0 0 -10 -1"])
+        self.case3 = self.create_case(["1 2 3 1 2 3",
+                                       "3 2 1 3 2 1",
+                                       "1 0 0 0 0 -1",
+                                       "0 10 0 0 -10 -1"])
 
     def create_case(self, lines):
         s = str(len(lines)) + "\n"
@@ -74,23 +86,23 @@ class CMTest(unittest.TestCase):
 
     def test_read_next(self):
         (pos, vel) = read_next(self.case1)
-        self.assertEqual(pos, np.array([[3, 0, -4],
-                                        [-3, -2, -1],
-                                        [-3, -1, 2]]))
-        self.assertEqual(vel, np.array([[0, 0, 3],
-                                        [3, 0, 0],
-                                        [0, 3, 0]]))
+        self.assertTrue((pos == np.array([[3, 0, -4],
+                                          [-3, -2, -1],
+                                          [-3, -1, 2]])).all())
+        self.assertTrue((vel == np.array([[0, 0, 3],
+                                          [3, 0, 0],
+                                          [0, 3, 0]])).all())
 
     def test_solve(self):
         (t, d) = solve_next(self.case1)
-        self.assertAlmostEqual(t, 0, self.ep)
-        self.assertAlmostEqual(d, 1, self.ep)
-        (t, d) = solve_next(self.case2)
         self.assertAlmostEqual(t, 1, self.ep)
-        self.assertAlmostEqual(d, 6, self.ep)
+        self.assertAlmostEqual(d, 0, self.ep)
+        (t, d) = solve_next(self.case2)
+        self.assertAlmostEqual(t, 6, self.ep)
+        self.assertAlmostEqual(d, 1, self.ep)
         (t, d) = solve_next(self.case3)
-        self.assertAlmostEqual(t, 3.3634, self.ep)
-        self.assertAlmostEqual(d, 1, self.ep)        
+        self.assertAlmostEqual(t, 1, self.ep)
+        self.assertAlmostEqual(d, 3.3634, self.ep)        
 
 
 if __name__ == '__main__':
