@@ -1,0 +1,52 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30723.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StandingOvation", "StandingOvation\StandingOvation.csproj", "{1F36A998-17DE-4629-AA7D-006F70BEAE63}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StandingOvationTest", "StandingOvationTest\StandingOvationTest.csproj", "{240EE054-5DEE-404D-858B-078EC2E8334D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InfiniteHouseOfPancakes", "InfiniteHouseOfPancakes\InfiniteHouseOfPancakes.csproj", "{95155A80-782E-4556-8CAB-8E87A4D6D5A2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InfiniteHouseOfPancakesTest", "InfiniteHouseOfPancakesTest\InfiniteHouseOfPancakesTest.csproj", "{8AB6B48B-55B4-49B0-AA79-415DB3D0AD3C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Djijkstra", "Djijkstra\Djijkstra.csproj", "{A3C81503-7D76-41BB-88AB-410B5740EA89}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DjijkstraTest", "DjijkstraTest\DjijkstraTest.csproj", "{8E33A80F-6BA5-41D1-9190-F0EF5C7CB30B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1F36A998-17DE-4629-AA7D-006F70BEAE63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F36A998-17DE-4629-AA7D-006F70BEAE63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F36A998-17DE-4629-AA7D-006F70BEAE63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F36A998-17DE-4629-AA7D-006F70BEAE63}.Release|Any CPU.Build.0 = Release|Any CPU
+		{240EE054-5DEE-404D-858B-078EC2E8334D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{240EE054-5DEE-404D-858B-078EC2E8334D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{240EE054-5DEE-404D-858B-078EC2E8334D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{240EE054-5DEE-404D-858B-078EC2E8334D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95155A80-782E-4556-8CAB-8E87A4D6D5A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95155A80-782E-4556-8CAB-8E87A4D6D5A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95155A80-782E-4556-8CAB-8E87A4D6D5A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95155A80-782E-4556-8CAB-8E87A4D6D5A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8AB6B48B-55B4-49B0-AA79-415DB3D0AD3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8AB6B48B-55B4-49B0-AA79-415DB3D0AD3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8AB6B48B-55B4-49B0-AA79-415DB3D0AD3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8AB6B48B-55B4-49B0-AA79-415DB3D0AD3C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3C81503-7D76-41BB-88AB-410B5740EA89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3C81503-7D76-41BB-88AB-410B5740EA89}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3C81503-7D76-41BB-88AB-410B5740EA89}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3C81503-7D76-41BB-88AB-410B5740EA89}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E33A80F-6BA5-41D1-9190-F0EF5C7CB30B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E33A80F-6BA5-41D1-9190-F0EF5C7CB30B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E33A80F-6BA5-41D1-9190-F0EF5C7CB30B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E33A80F-6BA5-41D1-9190-F0EF5C7CB30B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
