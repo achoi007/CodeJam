@@ -6,7 +6,7 @@
     <Description xml:space="preserve">C# template for Google Code Jam problems</Description>
     <MoreInfo>http://github.com/achoi007/CodeJam</MoreInfo>
     <License>apache_license.txt</License>
-    <Icon>codejam.jpg</Icon>
+    <Icon>codejam_small.png</Icon>
     <PreviewImage>codejam.jpg</PreviewImage>
     <Tags>codejam</Tags>
   </Metadata>
@@ -17,6 +17,6 @@
     <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />
   </Dependencies>
   <Assets>
-    <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="File" Path="ProjectTemplates" d:TargetPath="ProjectTemplates\GoogleCodeJamTemplate.zip" />
+    <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="File" Path="ProjectTemplates" d:TargetPath="ProjectTemplates\Google Code Jam.zip" />
   </Assets>
 </PackageManifest>

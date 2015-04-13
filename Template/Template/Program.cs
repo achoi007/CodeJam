@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+// namespace Template
 namespace $safeprojectname$
 {
     public interface ISolver
@@ -72,7 +73,7 @@ Case #3: 30
                 var line2 = txtIn.ReadLine().Split(' ').ToArray();
 
                 // Calls solver to solve
-                Console.WriteLine("{0} Doing on case #{1}", DateTime.Now.ToLongTimeString(), i);
+                Console.WriteLine("{0} Doing case #{1}", DateTime.Now.ToLongTimeString(), i);
                 var ans = solver.Solve(line1[0]);
 
                 // Prints output
@@ -156,41 +157,55 @@ Case #3: 30
             // If in test mode, compares output to sample output
             if (options.ContainsKey("test"))
             {
-                Console.WriteLine("Comparing result");
+                Console.WriteLine("Comparing results");
+                CompareOutputs(mSampeOut, ((StringWriter)txtOut).ToString());
+            }
 
-                // Separates expected and actual output into lines
-                var lineSep = new[] { '\r', '\n' };
-                var expected = mSampeOut.Split(lineSep, StringSplitOptions.RemoveEmptyEntries);
-                var actual = ((StringWriter)txtOut).ToString().Split(lineSep, StringSplitOptions.RemoveEmptyEntries);
+            Console.WriteLine("Press any key to end.");
+            Console.ReadKey();
+        }
 
-                // Checks output line count
-                if (expected.Length != actual.Length)
+        static void Warning(string fmt, params object[] p)
+        {
+            var origColor = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(fmt, p);
+            Console.ForegroundColor = origColor;
+        }
+
+        /// <summary>
+        /// Compares expected output to actual output and generates warnings on diffs
+        /// </summary>
+        /// <param name="expectedStr"></param>
+        /// <param name="actualStr"></param>
+        static void CompareOutputs(string expectedStr, string actualStr)
+        {
+            // Separates expected and actual output into lines
+            var lineSep = new[] { '\r', '\n' };
+            var expected = expectedStr.Split(lineSep, StringSplitOptions.RemoveEmptyEntries);
+            var actual = actualStr.Split(lineSep, StringSplitOptions.RemoveEmptyEntries);
+
+            // Checks output line count
+            if (expected.Length != actual.Length)
+            {
+                Warning("Diff in num of lines - expected {0} vs actual {1}", expected.Length, actual.Length);
+            }
+            int numLines = Math.Min(expected.Length, actual.Length);
+
+            // Performs line by line comparison
+            bool OK = true;
+            for (int i = 0; i < numLines; i++)
+            {
+                if (expected[i] != actual[i])
                 {
-                    Console.WriteLine("Diff in num of lines - expected {0} vs actual {1}", expected.Length, actual.Length);
+                    Warning("Expected: {0} vs Actual {1}", expected[i], actual[i]);
+                    OK = false;
                 }
-                int numLines = Math.Min(expected.Length, actual.Length);
+            }
 
-                // Performs line by line comparison
-                bool OK = true;
-                for (int i = 0; i < numLines; i++)
-                {
-                    if (expected[i] != actual[i])
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("Expected: {0} vs Actual {1}", expected[i], actual[i]);
-                        OK = false;
-                    }
-                }
-
-                if (OK)
-                {
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("All tests passed");
-                }
-
-                Console.ResetColor();
-                Console.WriteLine("Press any key to end.");
-                Console.ReadKey();
+            if (OK)
+            {
+                Console.WriteLine("All tests passed");
             }
         }
 
