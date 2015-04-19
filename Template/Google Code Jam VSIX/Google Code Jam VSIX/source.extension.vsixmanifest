@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="choiceware_Google_Code_Jam_CSharp..ee563287-2a25-466d-b4b6-99f3e4aff70e" Version="1.0" Language="en-US" Publisher="achoi@live.com" />
+    <Identity Id="choiceware_Google_Code_Jam_CSharp..ee563287-2a25-466d-b4b6-99f3e4aff70e" Version="1.1" Language="en-US" Publisher="achoi@live.com" />
     <DisplayName>Google Code Jam C# Template</DisplayName>
     <Description xml:space="preserve">C# template for Google Code Jam problems</Description>
     <MoreInfo>http://github.com/achoi007/CodeJam</MoreInfo>

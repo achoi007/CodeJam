@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 // namespace Template
@@ -20,6 +21,8 @@ namespace $safeprojectname$
     {
         public int Solve(int p)
         {
+            Thread.Sleep(500);
+
             if (p == 2)
             {
                 return 15;
@@ -46,12 +49,26 @@ namespace $safeprojectname$
     {
         #region changeonce
 
+        static string mSmallIn = @"
+1
+1
+1 junk
+";
+
+        static string mSmallOut = @"
+Case #1: 10
+";
+
+
         static string mSampleIn = @"
 3
+! Case 1
 1
 junk
+! Case 2
 2
 junk
+! Case 3
 3
 junk
 ";
@@ -65,12 +82,14 @@ Case #3: 30
 
         static void Process(TextReader txtIn, TextWriter txtOut, ISolver solver)
         {
+            long timeStart = DateTime.Now.Ticks;
+
             int numCases = int.Parse(txtIn.ReadLine());
             for (int i = 1; i <= numCases; i++)
             {
                 // Reads input
-                var line1 = txtIn.ReadLine().Split(' ').Select(s => int.Parse(s)).ToArray();
-                var line2 = txtIn.ReadLine().Split(' ').ToArray();
+                var line1 = ReadLine(txtIn).Split(' ').Select(s => int.Parse(s)).ToArray();
+                var line2 = ReadLine(txtIn).Split(' ').ToArray();
 
                 // Calls solver to solve
                 Console.WriteLine("{0} Doing case #{1}", DateTime.Now.ToLongTimeString(), i);
@@ -79,11 +98,28 @@ Case #3: 30
                 // Prints output
                 txtOut.WriteLine("Case #{0}: {1}", i, ans);
             }
+
+            long timeEnd = DateTime.Now.Ticks;
+            var elapsed = TimeSpan.FromTicks(timeEnd - timeStart);
+            Console.WriteLine("Elapsed time: {0} min {1} sec", elapsed.Minutes, elapsed.Seconds);
         }
 
         #endregion
 
         #region fixed
+
+        static string ReadLine(TextReader txtIn)
+        {
+            string line;
+
+            do
+            {
+                line = txtIn.ReadLine();
+            }
+            while (line != null && line.StartsWith("!"));
+
+            return line;
+        }
 
         static ISolver CreateSolver(IDictionary<string, string> options)
         {
@@ -123,7 +159,7 @@ Case #3: 30
 
             if (options.ContainsKey("test"))
             {
-                txtIn = new StringReader(mSampleIn);
+                txtIn = new StringReader(options["test"] == "small" ? mSmallIn : mSampleIn);
                 txtIn.ReadLine();   // Skips initial blank line
                 txtOut = new StringWriter();
             }
@@ -158,7 +194,8 @@ Case #3: 30
             if (options.ContainsKey("test"))
             {
                 Console.WriteLine("Comparing results");
-                CompareOutputs(mSampeOut, ((StringWriter)txtOut).ToString());
+                CompareOutputs(options["test"] == "small" ? mSmallOut : mSampeOut, 
+                    ((StringWriter)txtOut).ToString());
             }
 
             Console.WriteLine("Press any key to end.");
@@ -228,6 +265,7 @@ Case #3: 30
                 switch (optName)
                 {
                     case "solver":
+                    case "test":
                         ++argPos;
                         optVal = args[argPos];
                         break;
