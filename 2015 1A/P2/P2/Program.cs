@@ -138,6 +138,8 @@ namespace P2
 
     public class SmartSolver : ISolver
     {
+        const long MAX_BARBER_TIME = 100000L;
+
         public long Solve(long pos, long[] barberTimes)
         {
             long numBarbers = barberTimes.Length;
@@ -147,22 +149,32 @@ namespace P2
             {
                 return pos;
             }
+            
+            // Number of haircuts started at t
+            Func<long, long> calcStarted = t =>
+            {
+                return barberTimes.Sum(b => t / b) + numBarbers;
+            };
 
-            // Binary searches for time T s.t. Sum(haircuts, < lowerT) <= pos <= Sum(haircuts, > upperT) or pos == Sum(haircuts, mid)
+            // Performs binary search to find [lower, upper] so that either:
+            // calcStarted(mid) == pos
+            // -or-
+            // calcStarted(lower) < pos && calcStarted(higher) > pos
+            // 
             long lower = 0;
-            long upper = pos * 100000 / barberTimes.Length + 1;  // each barber takes at most 100,000 seconds per haircut
+            long upper = MAX_BARBER_TIME * pos;
             long found = -1;
             while (lower < upper)
             {
-                long mid = (upper + lower) / 2;
-                long haircuts = barberTimes.Sum(b => mid / b);
-                if (haircuts > pos)
-                {
-                    upper = mid - 1;
-                }
-                else if (haircuts < pos)
+                long mid = (lower + upper) / 2;
+                long haircuts = calcStarted(mid);
+                if (haircuts < pos)
                 {
                     lower = mid + 1;
+                }
+                else if (haircuts > pos)
+                {
+                    upper = mid - 1;
                 }
                 else
                 {
@@ -171,28 +183,53 @@ namespace P2
                 }
             }
 
-            if (found == -1)
+            // Figures out now so that calcStarted(now) < pos && calcStarted(now + 1) >= pos
+            // and numCust = calcStarted(now)
+            long now;
+            long numCust;
+            if (found != -1)
             {
-                found = lower;
+                // Keeps moving backwards until calcStarted(now) < pos.
+                now = found;
+                do
+                {
+                    now--;
+                    numCust = calcStarted(now);
+                } while (numCust == pos);
+            }
+            else
+            {
+                numCust = calcStarted(lower);
+                if (numCust < pos)
+                {
+                    now = lower;
+                }
+                else
+                {
+                    now = lower - 1;
+                    numCust = calcStarted(now);
+                }
             }
 
-            long numCust = barberTimes.Sum(b => (found - 1) / b);
+            // Increments to next day.  One of the barber should be cutting
+            // the hair.
+            now += 1;
             for (int i = 0; i < numBarbers; i++)
             {
-                    // If i-th barber is done, add to customer count
-                    if (found % barberTimes[i] == 0)
+                // If i-th barber is done, add to customer count
+                if (now % barberTimes[i] == 0)
+                {
+                    numCust++;
+                    // If customer count is same as position, we know the barber
+                    // number.  Returns it
+                    if (numCust == pos)
                     {
-                        numCust++;
-                        // If customer count is same as position, we know the barber
-                        // number.  Returns it
-                        if (numCust == pos)
-                        {
-                            return i + 1;   // Barber array starts at 0, barber number starts at 1
-                        }
-                    }                
+                        return i + 1;   // Barber array starts at 0, barber number starts at 1
+                    }
+                }
             }
 
-            // Not reached
+            // NOT REACHED
             return -1;
         }
     }
