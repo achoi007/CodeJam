@@ -7,8 +7,8 @@
     <ProjectGuid>{CB5CEAE8-4E0C-485C-930C-887681FE49CC}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Template</RootNamespace>
-    <AssemblyName>Template</AssemblyName>
+    <RootNamespace>P3</RootNamespace>
+    <AssemblyName>P3</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -41,11 +41,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IOUtils.cs" />
-    <Compile Include="LinAlg.cs" />
+    <Compile Include="IConvexHu.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TimeUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

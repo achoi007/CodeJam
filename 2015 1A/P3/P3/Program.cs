@@ -6,17 +6,154 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-// namespace Template
-namespace $safeprojectname$
+// namespace P3
+namespace P3
 {
-    public static class Constants
+    public static class Utils
     {
-        public const long MAX_ = 1;
+        public const int MAX_COORD = 1000000;
+        public const int MAX_POINTS = 3000;
+
+        /// <summary>
+        /// > 0 if counterclockwise
+        /// < 0 if clockwise
+        /// == 0 if colinear
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        public static int CCW(Point a, Point b, Point c)
+        {
+            return (b.X - a.X) * (c.Y - b.Y) - (b.Y - a.Y) * (c.X - b.X);
+        }
+
+        public static int DistSq(Point a, Point b)
+        {
+            int dx = a.X - b.X;
+            int dy = a.Y - b.Y;
+            return dx * dx + dy * dy;
+        }
     }
+
+    public class Point
+    {
+        public int X { get; set; }
+
+        public int Y { get; set; }
+
+        public double Angle { get; set; }
+
+        public override int GetHashCode()
+        {
+            return X * Utils.MAX_COORD + Y;
+        }
+
+        public override bool Equals(object obj)
+        {
+            Point rhs = (Point)obj;
+            return X == rhs.X && Y == rhs.Y;
+        }
+
+        public override string ToString()
+        {
+            return string.Format("{0}, {1}", X, Y);
+        }
+    }
+
+    public interface IConvexHull
+    {
+        IList<Point> Calc(IEnumerable<Point> points, bool isSorted);
+
+        void Sort(Point[] points);
+    }
+
+    public class GrahamScan : IConvexHull
+    {
+        class GSComparer : IComparer<Point>
+        {
+            private Point mRefPoint;
+
+            public GSComparer(Point refPoint)
+            {
+                mRefPoint = refPoint;
+            }
+
+            public int Compare(Point a, Point b)
+            {
+                int ccw = Utils.CCW(mRefPoint, a, b);
+                if (ccw == 0)
+                {
+                    return Utils.DistSq(mRefPoint, a) - Utils.DistSq(mRefPoint, b);
+                }
+                else
+                {
+                    return -ccw;
+                }
+            }
+        }
+
+
+        public IList<Point> Calc(IEnumerable<Point> givenPoints, bool isSorted)
+        {
+            // Sorts points if not sorted already
+            Point[] points = givenPoints.ToArray();
+            if (!isSorted)
+            {
+                Sort(points);
+            }
+
+            // Creates hull. Automatically adds first 2 points to hull
+            Stack<Point> hull = new Stack<Point>();
+            hull.Push(points[0]);
+            hull.Push(points[1]);
+            hull.Push(points[2]);
+
+            Func<Point> belowTop = () => hull.ElementAt(hull.Count - 2);
+
+            for (int i = 3; i < points.Length; i++)
+            {
+                while (hull.Count >= 3 && Utils.CCW(belowTop(), hull.Peek(), points[i]) < 0)
+                {
+                    hull.Pop();
+                }
+                hull.Push(points[i]);
+            }
+
+            // Returns hull
+            return hull.ToList();
+        }
+
+        public void Sort(Point[] points)
+        {
+            // Finds point with lowest Y coordinate then lowest X coordinate if same Y.
+            int minIdx = 0;
+            for (int i = 1; i < points.Length; i++)
+            {
+                if (points[i].Y < points[minIdx].Y)
+                {
+                    minIdx = i;
+                }
+                else if (points[i].Y == points[minIdx].Y && points[i].X < points[minIdx].X)
+                {
+                    minIdx = i;
+                }
+            }
+
+            // Makes points[0] the ref point
+            var t = points[0];
+            points[0] = points[minIdx];
+            points[minIdx] = t;
+
+            // Sorts by polar angles points[1 ... ]
+            Array.Sort(points, 1, points.Length - 1, new GSComparer(points[0]));
+        }
+    }
+
 
     public interface ISolver
     {
-        long Solve(long p);
+        int[] Solve(Point[] points);
     }
 
     /// <summary>
@@ -24,9 +161,27 @@ namespace $safeprojectname$
     /// </summary>
     public class BruteSolver : ISolver
     {
-        public long Solve(long p)
+        IConvexHull mCalc = new GrahamScan();
+
+        public int[] Solve(Point[] points)
         {
-            return 0;
+            int[] ans = new int[points.Length];
+
+            // Calculates convex hull
+            var cvxHull = mCalc.Calc(points, false);
+            var cvxHullSet = new HashSet<Point>(cvxHull);
+            
+            // If point is not in convex hull, calculates how many points need to be removed
+            for (int i = 0; i < points.Length; i++)
+            {
+                if (cvxHullSet.Contains(points[i]))
+                {
+                    continue;
+                }
+                ans[i] = -1;    // FINISH
+            }
+
+            return ans;
         }
     }
 
@@ -35,9 +190,9 @@ namespace $safeprojectname$
     /// </summary>
     public class SmartSolver : ISolver
     {
-        public long Solve(long p)
+        public int[] Solve(Point[] points)
         {
-            return 0;
+            throw new NotImplementedException();
         }
     }
 
@@ -57,22 +212,42 @@ Case #1: 10
 
 
         static string mSampleIn = @"
-3
-! Case 1
-1
-junk
-! Case 2
 2
-junk
-! Case 3
-3
-junk
+5
+0 0
+10 0
+10 10
+0 10
+5 5
+9
+0 0
+5 0
+10 0
+0 5
+5 5
+10 5
+0 10
+5 10
+10 10
 ";
 
         static string mSampeOut = @"
-Case #1: 10
-Case #2: 20
-Case #3: 30
+Case #1:
+0
+0
+0
+0
+1
+Case #2:
+0
+0
+0
+0
+3
+0
+0
+0
+0
 ";
 
 
@@ -84,15 +259,24 @@ Case #3: 30
             for (int i = 1; i <= numCases; i++)
             {
                 // Reads input
-                var line1 = ReadLine(txtIn).Split(' ').Select(s => long.Parse(s)).ToArray();
-                var line2 = ReadLine(txtIn).Split(' ').ToArray();
+                int numPoints = int.Parse(ReadLine(txtIn));
+                Point[] points = new Point[numPoints];
+                for (int j = 0; j < numPoints; j++)
+                {
+                    var line = ReadLine(txtIn).Split(' ').Select(s => int.Parse(s)).ToArray();
+                    points[j] = new Point() { X = line[0], Y = line[1] };
+                }
 
                 // Calls solver to solve
                 Console.WriteLine("{0} Doing case #{1}", DateTime.Now.ToLongTimeString(), i);
-                var ans = solver.Solve(line1[0]);
+                var ans = solver.Solve(points);
 
                 // Prints output
-                txtOut.WriteLine("Case #{0}: {1}", i, ans);
+                txtOut.WriteLine("Case #{0}:", i);
+                foreach (var num in ans)
+                {
+                    txtOut.WriteLine(num);
+                }
             }
 
             long timeEnd = DateTime.Now.Ticks;
@@ -103,17 +287,6 @@ Case #3: 30
         #endregion
 
         #region fixed
-
-        static string[] ReadStrings(TextReader txtIn)
-        {
-            int numStrs = int.Parse(ReadLine(txtIn));
-            string[] strs = new string[numStrs];
-            for (int i = 0; i < numStrs; i++)
-            {
-                strs[i] = ReadLine(txtIn);
-            }
-            return strs;
-        }
 
         static string ReadLine(TextReader txtIn)
         {
@@ -201,7 +374,7 @@ Case #3: 30
             if (options.ContainsKey("test"))
             {
                 Console.WriteLine("Comparing results");
-                CompareOutputs(options["test"] == "small" ? mSmallOut : mSampeOut, 
+                CompareOutputs(options["test"] == "small" ? mSmallOut : mSampeOut,
                     ((StringWriter)txtOut).ToString());
             }
 
@@ -238,11 +411,17 @@ Case #3: 30
 
             // Performs line by line comparison
             bool OK = true;
+            string currCase = "";
             for (int i = 0; i < numLines; i++)
             {
+                if (expected[i].StartsWith("Case #"))
+                {
+                    currCase = expected[i];
+                }
+
                 if (expected[i] != actual[i])
                 {
-                    Warning("Expected: {0} vs Actual {1}", expected[i], actual[i]);
+                    Warning("{2} @ {3} - Expected: {0} vs Actual {1}", expected[i], actual[i], currCase, i+1);
                     OK = false;
                 }
             }

@@ -6,17 +6,18 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-// namespace Template
-namespace $safeprojectname$
+// namespace SaveTheUniverse
+namespace SaveTheUniverse
 {
-    public static class Constants
+    public static class Consts
     {
-        public const long MAX_ = 1;
-    }
+        public const int NUM_ENGINES = 10;
+        public const int NUM_QUERIES = 100;
+    };
 
     public interface ISolver
     {
-        long Solve(long p);
+        int Solve(string[] searchEngines, string[] queries);
     }
 
     /// <summary>
@@ -24,9 +25,25 @@ namespace $safeprojectname$
     /// </summary>
     public class BruteSolver : ISolver
     {
-        public long Solve(long p)
+        public int Solve(string[] searchEngines, string[] queries)
         {
-            return 0;
+            int numSwitch = 0;
+
+            // Loop Invariant
+            // queries[0 .. i-1] is not in validEngines
+            HashSet<string> validEngines = new HashSet<string>(searchEngines);
+            for (int i = 0; i < queries.Length; i++)
+            {
+                validEngines.Remove(queries[i]);
+                if (validEngines.Count == 0)
+                {
+                    ++numSwitch;
+                    validEngines = new HashSet<string>(searchEngines);
+                    --i;
+                }
+            }
+            
+            return numSwitch;
         }
     }
 
@@ -35,9 +52,9 @@ namespace $safeprojectname$
     /// </summary>
     public class SmartSolver : ISolver
     {
-        public long Solve(long p)
+        public int Solve(string[] searchEngines, string[] queries)
         {
-            return 0;
+            throw new NotImplementedException();
         }
     }
 
@@ -57,22 +74,43 @@ Case #1: 10
 
 
         static string mSampleIn = @"
-3
-! Case 1
-1
-junk
-! Case 2
 2
-junk
-! Case 3
-3
-junk
+5
+Yeehaw
+NSM
+Dont Ask
+B9
+Googol
+10
+Yeehaw
+Yeehaw
+Googol
+B9
+Googol
+NSM
+B9
+NSM
+Dont Ask
+Googol
+5
+Yeehaw
+NSM
+Dont Ask
+B9
+Googol
+7
+Googol
+Dont Ask
+NSM
+NSM
+Yeehaw
+Yeehaw
+Googol
 ";
 
         static string mSampeOut = @"
-Case #1: 10
-Case #2: 20
-Case #3: 30
+Case #1: 1
+Case #2: 0
 ";
 
 
@@ -84,12 +122,12 @@ Case #3: 30
             for (int i = 1; i <= numCases; i++)
             {
                 // Reads input
-                var line1 = ReadLine(txtIn).Split(' ').Select(s => long.Parse(s)).ToArray();
-                var line2 = ReadLine(txtIn).Split(' ').ToArray();
+                string[] engines = ReadStrings(txtIn);
+                string[] queries = ReadStrings(txtIn);
 
                 // Calls solver to solve
                 Console.WriteLine("{0} Doing case #{1}", DateTime.Now.ToLongTimeString(), i);
-                var ans = solver.Solve(line1[0]);
+                var ans = solver.Solve(engines, queries);
 
                 // Prints output
                 txtOut.WriteLine("Case #{0}: {1}", i, ans);
@@ -201,7 +239,7 @@ Case #3: 30
             if (options.ContainsKey("test"))
             {
                 Console.WriteLine("Comparing results");
-                CompareOutputs(options["test"] == "small" ? mSmallOut : mSampeOut, 
+                CompareOutputs(options["test"] == "small" ? mSmallOut : mSampeOut,
                     ((StringWriter)txtOut).ToString());
             }
 
