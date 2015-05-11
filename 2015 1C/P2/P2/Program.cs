@@ -21,6 +21,29 @@ namespace P2
         double Solve(string keys, long numTimes, string targetWord);
     }
 
+    public static class Utils
+    {
+        public static bool CanType(string keys, string word)
+        {
+            bool[] hasKeys = new bool[Char.MaxValue];
+
+            foreach (var ch in keys)
+            {
+                hasKeys[ch] = true;
+            }
+
+            foreach (var ch in word)
+            {
+                if (!hasKeys[ch])
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+    }
+
     /// <summary>
     /// Brute force solver that can handle small but not large problems.
     /// </summary>
@@ -28,6 +51,11 @@ namespace P2
     {
         public double Solve(string keys, long numTimes, string targetWord)
         {
+            if (!Utils.CanType(keys, targetWord))
+            {
+                return 0;
+            }
+
             var outcomes = GenOutcomes(keys, numTimes).Select(w => CountBananas(w, targetWord)).ToArray();
             var maxBananas = outcomes.Max();
             var avgBananas = outcomes.Average();
@@ -80,17 +108,56 @@ namespace P2
     {
         public double Solve(string keys, long numTimes, string targetWord)
         {
+            if (!Utils.CanType(keys, targetWord))
+            {
+                return 0;
+            }
+
             int numKeys = keys.Length;
 
             var charDict = keys.GroupBy(k => k).Select(g => new { Key = g.Key, Count = g.Count() })
                 .ToDictionary(nvp => nvp.Key, nvp => nvp.Count);
 
+            long maxBananas = CalcMaxBananas(targetWord, numTimes);
+
             return 0;   // FINISH
+        }
+
+        public int CalcLongestPrefixIdx(string s)
+        {
+            for (int i = 1; i < s.Length; i++)
+            {
+                if (s.StartsWith(s.Substring(i)))
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
+        public long CalcMaxBananas(string s, long numTimes)
+        {
+            var prefix = CalcLongestPrefixIdx(s);
+
+            if (s.Length > numTimes)
+            {
+                return 0;
+            }
+
+            if (prefix == -1)
+            {
+                return numTimes / s.Length;
+            }
+
+            long left = numTimes - s.Length;
+            long suffixLen = s.Length - prefix + 1;
+            return 1 + left / suffixLen;
         }
 
         public double CalcWordProbability(IDictionary<char, int> charDict, int numKeys, string word)
         {
-            double p = 0;
+            double p = 1;
 
             foreach (var ch in word)
             {

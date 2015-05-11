@@ -11,12 +11,15 @@ namespace P3
 {
     public static class Constants
     {
-        public const long MAX_ = 1;
+        public const long MAX_C = 1;
+        public const long MAX_D = 5;
+        public const long MAX_V = 30;
+
     }
 
     public interface ISolver
     {
-        long Solve(long p);
+        long Solve(int maxCoins, int[] coins, long maxValue);
     }
 
     /// <summary>
@@ -24,9 +27,35 @@ namespace P3
     /// </summary>
     public class BruteSolver : ISolver
     {
-        public long Solve(long p)
+        public long Solve(int maxCoins, int[] coins, long maxValue)
         {
-            return 0;
+            Array.Sort(coins);
+            var holes = FindHoles(maxCoins, coins, maxValue).ToArray();
+
+        }
+
+        public IEnumerable<long> FindHoles(int maxCoins, int[] coins, long maxValue)
+        {
+            bool[] fillable = new bool[maxValue];
+            fillable[0] = true;
+
+            foreach (var coin in coins.Where(c => c <= maxValue))
+            {
+                for (int m = 1; m <= maxCoins; m++)
+                {
+                    fillable[m * coin] = true;
+                }
+            }
+
+
+
+            for (int i = 1; i < maxValue; i++)
+            {
+                if (!fillable[i])
+                {
+                    yield return i;
+                }
+            }
         }
     }
 
@@ -35,9 +64,10 @@ namespace P3
     /// </summary>
     public class SmartSolver : ISolver
     {
-        public long Solve(long p)
+
+        public long Solve(int maxCoins, int[] coins, long maxValue)
         {
-            return 0;
+            throw new NotImplementedException();
         }
     }
 
@@ -57,22 +87,22 @@ Case #1: 10
 
 
         static string mSampleIn = @"
+4
+1 2 3
+1 2
+1 3 6
+1 2 5
+2 1 3
 3
-! Case 1
-1
-junk
-! Case 2
-2
-junk
-! Case 3
-3
-junk
+1 6 100
+1 5 10 25 50 100
 ";
 
         static string mSampeOut = @"
-Case #1: 10
-Case #2: 20
-Case #3: 30
+Case #1: 0
+Case #2: 1
+Case #3: 1
+Case #4: 3
 ";
 
 
@@ -84,12 +114,12 @@ Case #3: 30
             for (int i = 1; i <= numCases; i++)
             {
                 // Reads input
-                var line1 = ReadLine(txtIn).Split(' ').Select(s => long.Parse(s)).ToArray();
-                var line2 = ReadLine(txtIn).Split(' ').ToArray();
+                var line1 = ReadLine(txtIn).Split(' ').Select(s => int.Parse(s)).ToArray();
+                var line2 = ReadLine(txtIn).Split(' ').Select(s => int.Parse(s)).ToArray();
 
                 // Calls solver to solve
                 Console.WriteLine("{0} Doing case #{1}", DateTime.Now.ToLongTimeString(), i);
-                var ans = solver.Solve(line1[0]);
+                var ans = solver.Solve(line1[0], line2, line1[2]);
 
                 // Prints output
                 txtOut.WriteLine("Case #{0}: {1}", i, ans);
