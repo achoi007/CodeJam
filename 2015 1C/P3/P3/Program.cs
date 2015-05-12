@@ -45,12 +45,13 @@ namespace P3
             // Adds each subsequent coins 
             FindFillables(maxCoins, coins.Skip(1), maxValue, fillables);
 
+            // Goes through all values from 1 to maxValue to fill any missing hole.
             long numNewCoins = 0;
             for (long val = 1; val <= maxValue; val++)
             {
                 if (!fillables.Contains(val))
                 {
-                    FindFillables(maxCoins, new long[] { val }, maxValue, fillables);
+                    FindFillables(maxCoins, Enumerable.Repeat(val, 1), maxValue, fillables);
                     ++numNewCoins;
                 }
             }
