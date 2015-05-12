@@ -54,6 +54,7 @@ namespace P3
                     ++numNewCoins;
                 }
             }
+
             return numNewCoins;
         }
 
