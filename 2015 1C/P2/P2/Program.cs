@@ -25,22 +25,8 @@ namespace P2
     {
         public static bool CanType(string keys, string word)
         {
-            bool[] hasKeys = new bool[Char.MaxValue];
-
-            foreach (var ch in keys)
-            {
-                hasKeys[ch] = true;
-            }
-
-            foreach (var ch in word)
-            {
-                if (!hasKeys[ch])
-                {
-                    return false;
-                }
-            }
-
-            return true;
+            var keyDict = keys.GroupBy(k => k).ToDictionary(g => g.Key);
+            return keys.All(c => keyDict.ContainsKey(c));
         }
     }
 
