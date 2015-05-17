@@ -56,6 +56,7 @@ namespace P2.Test
             Assert.AreEqual(5, mSolver.CalcMaxBananas("regal", 25));
 
             // Repeats
+            Assert.AreEqual(2, mSolver.CalcMaxBananas("aa", 3));
             Assert.AreEqual(0, mSolver.CalcMaxBananas("abcab", 3));
             Assert.AreEqual(1, mSolver.CalcMaxBananas("abcab", 7));
             Assert.AreEqual(2, mSolver.CalcMaxBananas("abcab", 8));
